@@ -6,7 +6,6 @@ import ChatPage from './routes/chat'
 
 const socket = socketIO('http://localhost:4000').connect()
 socket.emit('hi', 'hi')
-// const s = socket.connect()
 
 function App() {
 

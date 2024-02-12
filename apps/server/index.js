@@ -1,34 +1,35 @@
 import express from 'express';
 import cors from 'cors';
-import http from 'node:http'
-import { Server as SocketIO } from 'socket.io';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import { instrument } from '@socket.io/admin-ui';
 
 const app = express();
 const PORT = 4000
-const HTTP_PORT = 4001
 
-const server = http.createServer(app)
+const httpServer = createServer(app)
 
-const socketIO = new SocketIO(PORT, {
+const io = new Server(httpServer, {
   cors: {
-    origin: 'http://localhost:5173',
+    origin: ['http://localhost:5173', 'https://admin.socket.io'],
+    credentials: true
   }
 });
-// const socketIO = new SocketIO(server, {
-//   cors: {
-//     origin: 'http://localhost:5173',
-//   }
-// });
+
+instrument(io, {
+  auth: false,
+  mode: 'development'
+});
 
 app.use(cors());
 
-socketIO.on('connection', (socket) => {
+io.on('connection', (socket) => {
   console.log(`user ${socket.id} just connected`);
 
   socket.on('message', (message) => {
     console.log(`user ${socket.id} just sent message: ${message}`);
     //sends the message to all connected clients
-    socketIO.emit('messageResponse', message);
+    io.emit('messageResponse', message);
   });
 
   socket.on('disconnect', () => {
@@ -41,7 +42,7 @@ socketIO.on('connection', (socket) => {
 
   socket.on('log', (message) => {
     console.log('log:', message);
-    socketIO.emit('logMessage', message);
+    io.emit('logMessage', message);
   })
 });
 
@@ -51,6 +52,6 @@ app.get('/api', (req, res) => {
   });
 });
 
-server.listen(HTTP_PORT, () => {
-  console.log(`Server listening on port ${HTTP_PORT}`);
+httpServer.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
 });
