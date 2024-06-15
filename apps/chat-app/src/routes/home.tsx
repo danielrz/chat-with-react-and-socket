@@ -1,9 +1,13 @@
 import { useState, ChangeEvent, FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Socket } from 'socket.io-client'
+// import { Socket } from 'socket.io-client'
+import type { NewUser } from '../types/Chat'
+import { getSocket } from '../handlers/socketHandler'
+// import useSocket from '../hooks/useSocket'
 
-function Home({ socket }: { socket: Socket}) {
+function Home() {
   const navigate = useNavigate()
+  // const socket = useSocket()
   const [userName, setUserName] = useState('')
 
   const onUserNameChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -13,6 +17,8 @@ function Home({ socket }: { socket: Socket}) {
   const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     localStorage.setItem('userName', userName)
+    const socket = getSocket()
+    socket?.emit('newUser', { userName, socketId: socket.id } as NewUser)
     navigate('/chat')
   }
 

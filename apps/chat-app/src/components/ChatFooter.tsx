@@ -1,30 +1,34 @@
 import { FormEvent, useState } from "react"
-import { Socket } from "socket.io-client"
+// import { Socket } from "socket.io-client"
+// import useSocket from "../hooks/useSocket"
 import type { ChatMessage } from "../types/Chat"
+import { getSocket } from "../handlers/socketHandler"
 
-function ChatFooter({socket}: {socket: Socket}) {
+function ChatFooter() {
+  // const socket = useSocket()
   const [message, setMessage] = useState('')
 
   const onTextType = (e: FormEvent<HTMLInputElement>) => {
     setMessage(e.currentTarget.value)
   }
   const onSendMessageClick = (e: FormEvent<HTMLFormElement>) => {
+    const socket = getSocket()
     e.preventDefault()
     if (message.trim() === '' && localStorage.getItem('userName') === null) {
       return
     }
-    socket.emit('message', {
+    socket?.emit('message', {
       name: localStorage.getItem('userName'),
       text: message,
-      id: `${socket.id}-${Date.now()}`,
-      socketId: socket.id
+      id: `${socket?.id}-${Date.now()}`,
+      socketId: socket?.id
     } as ChatMessage)
 
-    socket.emit('log', {
+    socket?.emit('log', {
       name: localStorage.getItem('userName'),
       text: message,
-      id: `${socket.id}-${Date.now()}`,
-      socketId: socket.id
+      id: `${socket?.id}-${Date.now()}`,
+      socketId: socket?.id
     } as ChatMessage)
     setMessage('')
   }

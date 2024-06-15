@@ -1,11 +1,23 @@
 import { useNavigate } from 'react-router-dom'
-import type { ChatMessage } from '../types/Chat'
+// import { Socket } from 'socket.io-client'
+import type { ChatMessage, NewUser } from '../types/Chat'
+import useUserInfo from '../hooks/useUserInfo'
+import { getSocket } from '../handlers/socketHandler'
+// import useSocket from '../hooks/useSocket'
 
-function ChatBody({messages}: {messages: ChatMessage[]}) {
+interface Props {messages: ChatMessage[]}
+
+function ChatBody({props}: {props: Props}) {
+  // const socket = useSocket()
+  const socket = getSocket()
+  const { messages } = props
   const navigate = useNavigate()
+  const userInfo: NewUser = useUserInfo()
 
   const onLeaveChatClick = () => {
+    console.log('onLeaveChatClick', localStorage.getItem('userName'))
     localStorage.removeItem('userName')
+    // socket.close()
     navigate('/')
     // window.location.reload()
   }
@@ -13,7 +25,7 @@ function ChatBody({messages}: {messages: ChatMessage[]}) {
   return (
     <>
       <header className='chat__mainHeader'>
-        <p>Hangout with colleagues</p>
+        <p><strong>{userInfo.userName} - {localStorage.getItem('userName')} - {socket?.id}</strong>, Hangout with colleagues</p>
         <button className='leaveChat__btn' onClick={onLeaveChatClick}>
           Leave Chat
         </button>

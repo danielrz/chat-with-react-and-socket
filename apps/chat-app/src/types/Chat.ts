@@ -5,4 +5,12 @@ interface ChatMessage {
   socketId: string
 }
 
-export type { ChatMessage }
+interface NewUser {
+  userName: string
+  socketId: string
+}
+
+export type {
+  ChatMessage,
+  NewUser
+}

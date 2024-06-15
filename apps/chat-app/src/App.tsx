@@ -1,11 +1,11 @@
 import './App.css'
-import socketIO from 'socket.io-client'
+// import socketIO from 'socket.io-client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import HomePage from './routes/home'
 import ChatPage from './routes/chat'
 
-const socket = socketIO('http://localhost:4000').connect()
-socket.emit('hi', 'hi')
+// const socket = socketIO('http://localhost:4000').connect()
+// socket.emit('hi', 'hi')
 
 function App() {
 
@@ -13,8 +13,8 @@ function App() {
     <BrowserRouter>
       <div>
         <Routes>
-          <Route path="/" element={<HomePage socket={socket} />} />
-          <Route path="/chat" element={<ChatPage socket={socket} />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/chat" element={<ChatPage />} />
         </Routes>
       </div>
     </BrowserRouter>

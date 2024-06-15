@@ -6,6 +6,7 @@ import { instrument } from '@socket.io/admin-ui';
 
 const app = express();
 const PORT = 4000
+let users = [];
 
 const httpServer = createServer(app)
 
@@ -34,6 +35,18 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log(`user ${socket.id} just disconnected`);
+    console.log('users before deconnection', users)
+    users = users.filter((user) => user.socketId !== socket.id);
+    console.log('users after deconnection', users)
+    io.emit('usersResponse', users);
+    socket.disconnect();
+  });
+
+  socket.on('newUser', (data) => {
+    users.push(data);
+    io.emit('newUserResponse', data)
+    io.emit('usersResponse', users);
+    console.log('users after new user registration', users)
   });
 
   socket.on('hi', () => {
